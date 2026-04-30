@@ -1,0 +1,425 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ── Confetti canvas ── */
+#confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+
+/* ── Victory overlay ── */
+.victory-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.victory-overlay.show {
+    display: flex;
+}
+
+.victory-card {
+    background: white;
+    border-radius: 24px;
+    padding: 48px 40px 36px;
+    text-align: center;
+    max-width: 380px;
+    width: 90%;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.35);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.victory-icon {
+    font-size: 4em;
+    margin-bottom: 16px;
+    animation: spin 0.6s ease-out;
+}
+
+.victory-title {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.victory-msg {
+    font-size: 1em;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.btn-victory-close {
+    padding: 12px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-victory-close:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.btn-victory-close:active {
+    transform: translateY(0);
+}
+
+/* ── Main container ── */
+.container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 40px;
+    max-width: 900px;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #555;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+/* ── Controls ── */
+.controls {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-group label {
+    font-weight: bold;
+    color: #333;
+}
+
+.control-group select {
+    padding: 8px 12px;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    background: white;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.control-group select:hover {
+    border-color: #764ba2;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.btn-reset {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
+}
+
+.btn-reset:active {
+    transform: translateY(0);
+}
+
+.btn-block {
+    padding: 10px 20px;
+    background: white;
+    color: #555;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-block:hover {
+    border-color: #e24b4a;
+    color: #e24b4a;
+    transform: translateY(-2px);
+}
+
+.btn-block.active {
+    background: linear-gradient(135deg, #e24b4a 0%, #c0392b 100%);
+    color: white;
+    border-color: #c0392b;
+    box-shadow: 0 4px 14px rgba(226, 75, 74, 0.4);
+}
+
+/* ── Board ── */
+.board-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    background: #333;
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+}
+
+.board.classic { background: #333; }
+.board.ocean   { background: #1a3a52; }
+.board.forest  { background: #1b4332; }
+.board.sunset  { background: #6a3e37; }
+
+.cell {
+    aspect-ratio: 1;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    position: relative;
+    user-select: none;
+}
+
+.cell:hover:not(.blocked) {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+/* Board colors */
+.classic .cell-white { background: #f0d9b5; }
+.classic .cell-black { background: #b58863; }
+.ocean .cell-white   { background: #87ceeb; }
+.ocean .cell-black   { background: #4682b4; }
+.forest .cell-white  { background: #90ee90; }
+.forest .cell-black  { background: #228b22; }
+.sunset .cell-white  { background: #ffd700; }
+.sunset .cell-black  { background: #ff8c00; }
+
+/* Cell states */
+.cell.blocked {
+    cursor: pointer;
+    opacity: 0.85;
+}
+
+.cell.blocked::after {
+    content: '🔒';
+    position: absolute;
+    font-size: 0.85em;
+}
+
+.cell.attack {
+    background: rgba(255, 0, 0, 0.35) !important;
+    box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.cell.queen {
+    background: rgba(255, 215, 0, 0.2) !important;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.cell.safe {
+    background: rgba(0, 200, 100, 0.12) !important;
+}
+
+.cell.queen.success {
+    animation: pulse 0.55s ease-in-out 3;
+    background: rgba(255, 215, 0, 0.45) !important;
+    box-shadow: 0 0 22px rgba(255, 215, 0, 0.85);
+}
+
+/* ── Status ── */
+.status {
+    font-weight: bold;
+    color: #667eea;
+    transition: color 0.3s ease;
+}
+
+.status-win {
+    color: #27ae60 !important;
+    font-size: 1.1em;
+    animation: fadeIn 0.4s ease;
+}
+
+/* ── Solutions section ── */
+.solutions-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.solutions-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-solution {
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-solution:hover {
+    background: #764ba2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-solution:active {
+    transform: translateY(0);
+}
+
+.solution-info {
+    font-size: 14px;
+    color: #555;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+/* ── Info section ── */
+.info-section {
+    margin-top: 25px;
+    padding: 15px;
+    background: #f0f4ff;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.info-section p {
+    color: #555;
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+/* ── Animations ── */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.12); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes spin {
+    from { transform: rotate(-20deg) scale(0.5); opacity: 0; }
+    to   { transform: rotate(0deg)   scale(1);   opacity: 1; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .control-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .board {
+        max-width: 100%;
+    }
+
+    .btn-solution {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .btn-block,
+    .btn-reset {
+        width: 100%;
+    }
+
+    .victory-card {
+        padding: 36px 24px 28px;
+    }
+}

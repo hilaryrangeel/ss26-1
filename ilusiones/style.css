@@ -1,0 +1,341 @@
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #04040c;
+      --text: #eeeaf4;
+      --muted: #55556a;
+      --acc: #7eb8ff;
+      --acc2: #c084fc;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+    }
+
+    /* ───── OPTICAL ILLUSION BACKGROUND ───── */
+    .illusion-bg {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 0;
+    }
+
+    /* Rotating concentric rings — classic motion illusion */
+    .rings {
+      position: absolute;
+      width: min(110vw, 110vh);
+      height: min(110vw, 110vh);
+    }
+
+    .ring {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 50%;
+      border: 2px solid transparent;
+    }
+
+    /* Alternating spin directions to create the "spinning" depth illusion */
+    .ring:nth-child(odd)  { animation: spinCW  var(--dur, 8s) linear infinite; }
+    .ring:nth-child(even) { animation: spinCCW var(--dur, 8s) linear infinite; }
+
+    @keyframes spinCW  { to { transform: rotate(360deg);  } }
+    @keyframes spinCCW { to { transform: rotate(-360deg); } }
+
+    /* Generate 14 rings via JS below, each smaller & different color */
+
+    /* Spiral grid overlay — Hermann grid illusion feel */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(126,184,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126,184,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      animation: gridShift 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gridShift {
+      from { background-position: 0 0; }
+      to   { background-position: 48px 48px; }
+    }
+
+    /* Pulsing radial gradient in center */
+    .center-glow {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%,
+        rgba(192,132,252,0.12) 0%,
+        rgba(126,184,255,0.06) 35%,
+        transparent 70%);
+      animation: breathe 4s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes breathe {
+      0%,100% { transform: scale(1);   opacity: 0.6; }
+      50%      { transform: scale(1.2); opacity: 1;   }
+    }
+
+    /* Floating diagonal stripes — Fraser spiral illusion hint */
+    .stripes {
+      position: fixed;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 18px,
+        rgba(126,184,255,0.025) 18px,
+        rgba(126,184,255,0.025) 20px
+      );
+      animation: driftStripes 30s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes driftStripes {
+      from { transform: translate(0,0); }
+      to   { transform: translate(40px, 40px); }
+    }
+
+    /* Floating dots — peripheral drift illusion */
+    .dots-field {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--acc2);
+      opacity: 0;
+      animation: dotPulse var(--dot-dur) ease-in-out var(--dot-delay) infinite;
+    }
+
+    @keyframes dotPulse {
+      0%,100% { opacity: 0;    transform: scale(0.4); }
+      50%      { opacity: 0.35; transform: scale(1);   }
+    }
+
+    /* ───── CONTENT ───── */
+    .content {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 0;
+    }
+
+    /* Eye icon — animated */
+    .eye-wrap {
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .eye-svg {
+      width: 72px;
+      height: 72px;
+      filter: drop-shadow(0 0 18px rgba(126,184,255,0.5));
+    }
+
+    /* pupil blinks and looks around */
+    .pupil {
+      animation: look 5s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .eyelid-top { animation: blink 5s ease-in-out infinite; transform-origin: center top; }
+    .eyelid-bot { animation: blinkBot 5s ease-in-out infinite; transform-origin: center bottom; }
+
+    @keyframes look {
+      0%,100% { transform: translate(0,0); }
+      20%      { transform: translate(6px,-3px); }
+      40%      { transform: translate(-5px, 4px); }
+      60%      { transform: translate(4px, 5px); }
+      80%      { transform: translate(-6px,-2px); }
+    }
+
+    @keyframes blink {
+      0%,88%,96%,100% { transform: scaleY(1); }
+      92%              { transform: scaleY(0.05); }
+    }
+    @keyframes blinkBot {
+      0%,88%,96%,100% { transform: scaleY(1); }
+      92%              { transform: scaleY(0.05); }
+    }
+
+    /* Title */
+    .title {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 7vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(120deg, var(--acc) 0%, var(--acc2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 0.8s 0.1s ease both;
+      margin-bottom: 0.6rem;
+    }
+
+    .subtitle {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(0.55rem, 1.8vw, 0.75rem);
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: fadeUp 0.8s 0.2s ease both;
+      margin-bottom: 3rem;
+    }
+
+    /* Construction badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      animation: fadeUp 0.8s 0.3s ease both;
+      margin-bottom: 2.5rem;
+    }
+
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 8px #fbbf24;
+      animation: blink-dot 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink-dot {
+      0%,100% { opacity:1; }
+      50%      { opacity:0.2; }
+    }
+
+    /* Progress bar — fake loading */
+    .progress-wrap {
+      width: min(340px, 80vw);
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--acc), var(--acc2));
+      box-shadow: 0 0 12px rgba(126,184,255,0.5);
+      animation: progressGrow 4s cubic-bezier(0.4,0,0.2,1) forwards,
+                 progressPulse 2s ease-in-out 4s infinite;
+      width: 0%;
+    }
+
+    @keyframes progressGrow {
+      0%   { width: 0%; }
+      30%  { width: 38%; }
+      55%  { width: 62%; }
+      78%  { width: 71%; }
+      100% { width: 71%; }
+    }
+
+    @keyframes progressPulse {
+      0%,100% { opacity:1; }
+      50%      { opacity:0.5; }
+    }
+
+    /* Back link */
+    .back-link {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      z-index: 20;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+      animation: fadeUp 0.6s ease both;
+    }
+    .back-link:hover { color: var(--text); }
+
+    /* Illusion fact at bottom */
+    .fact {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      text-align: center;
+      max-width: 380px;
+      line-height: 1.6;
+      animation: fadeUp 0.8s 0.6s ease both;
+      pointer-events: none;
+    }
+
+    .fact em {
+      color: rgba(126,184,255,0.7);
+      font-style: normal;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* noise */
+    .noise {
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 5;
+    }
+  

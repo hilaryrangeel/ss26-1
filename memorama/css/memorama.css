@@ -1,0 +1,214 @@
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Tokens ── */
+:root {
+  --bg:      #080810;
+  --surface: #0f0f1a;
+  --border:  rgba(255,255,255,0.07);
+  --text:    #eeeaf4;
+  --muted:   #55556a;
+  --acc:     #5ef5c8;
+  --acc2:    #7eb8ff;
+  --danger:  #ff5fa0;
+}
+
+/* ── Base ── */
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* wallpaper set via JS — overlay so cards stay readable */
+  position: relative;
+}
+
+/* Dark overlay so wallpaper doesn't kill readability */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 16, 0.72);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Noise grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Top interface ── */
+#interfaz-superior {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,16,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Stat boxes ── */
+#marcador {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.stat-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  text-align: center;
+  min-width: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* accent bottom line */
+.stat-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--acc), var(--acc2));
+  border-radius: 0 0 12px 12px;
+}
+
+.stat-box label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+  font-family: 'Manrope', sans-serif;
+}
+
+.stat-box span {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.total-pares {
+  font-family: 'Manrope', sans-serif !important;
+  font-size: 0.75rem !important;
+  color: var(--muted) !important;
+  font-weight: 300 !important;
+}
+
+/* ── Buttons ── */
+#botones {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  border-color: rgba(255,255,255,0.14);
+}
+
+.btn:active { transform: scale(0.95); }
+
+.btn-reiniciar {
+  border-color: rgba(255,95,160,0.3);
+  color: var(--danger);
+}
+
+.btn-reiniciar:hover {
+  background: rgba(255,95,160,0.1);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+/* ── Board container ── */
+.tablero {
+  position: relative;
+  z-index: 5;
+  background: rgba(15, 15, 26, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.2rem;
+  width: fit-content;
+  margin: 1.5rem auto 2rem;
+}
+
+/* ── Table ── */
+table {
+  border-collapse: separate;
+  border-spacing: 8px;
+}
+
+td { padding: 0; }
+
+/* ── Cards ── */
+img {
+  display: block;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  transition: transform 0.15s cubic-bezier(.22,1,.36,1),
+              box-shadow 0.15s,
+              border-color 0.15s;
+}
+
+img:hover {
+  transform: scale(1.06) translateY(-2px);
+  border-color: rgba(94,245,200,0.35);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* hidden/matched cards */
+img[style*="visibility: hidden"] {
+  pointer-events: none;
+}
+
+/* ── Help debug text ── */
+#help {
+  position: relative;
+  z-index: 5;
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-align: center;
+  padding-bottom: 1rem;
+  font-family: 'Manrope', sans-serif;
+  opacity: 0.4;
+}
+
+/* ── Google font load for memorama.html ── */
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@300;400;500&display=swap');

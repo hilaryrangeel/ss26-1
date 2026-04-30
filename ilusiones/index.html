@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ilusiones Ópticas — En Construcción</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background layers -->
+  <div class="stripes"></div>
+  <div class="grid-overlay"></div>
+  <div class="center-glow"></div>
+  <div class="dots-field" id="dotsField"></div>
+
+  <div class="illusion-bg">
+    <div class="rings" id="rings"></div>
+  </div>
+
+  <div class="noise"></div>
+
+  <!-- UI -->
+  <a class="back-link" href="../index.html">← Volver</a>
+
+  <div class="content">
+    <div class="eye-wrap">
+      <svg class="eye-svg" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="36" cy="36" rx="32" ry="20" stroke="url(#eg)" stroke-width="2.5" fill="rgba(126,184,255,0.05)"/>
+        <ellipse class="eyelid-top" cx="36" cy="22" rx="32" ry="16" fill="var(--bg)"/>
+        <ellipse class="eyelid-bot" cx="36" cy="50" rx="32" ry="16" fill="var(--bg)"/>
+        <circle class="pupil" cx="36" cy="36" r="10" fill="url(#ep)"/>
+        <circle cx="36" cy="36" r="4" fill="var(--bg)"/>
+        <circle cx="33" cy="33" r="2" fill="rgba(255,255,255,0.5)"/>
+        <defs>
+          <linearGradient id="eg" x1="4" y1="36" x2="68" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#7eb8ff"/>
+            <stop offset="100%" stop-color="#c084fc"/>
+          </linearGradient>
+          <radialGradient id="ep" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#c084fc"/>
+            <stop offset="100%" stop-color="#7eb8ff"/>
+          </radialGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <h1 class="title">Ilusiones<br>Ópticas</h1>
+    <p class="subtitle">Simulación · 2026-1</p>
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      En construcción
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>Progreso</span>
+        <span id="pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="fact">
+    ¿Sabías que los anillos de abajo <em>no se mueven</em>? Tu cerebro crea el movimiento a partir de los patrones estáticos.
+  </p>
+
+  <script>
+    // ── Generate concentric rings ──
+    const ringsEl = document.getElementById('rings');
+    const colors = [
+      '#7eb8ff','#c084fc','#5ef5c8','#ff5fa0',
+      '#ffe45e','#7eb8ff','#c084fc','#5ef5c8',
+      '#ff5fa0','#ffe45e','#7eb8ff','#c084fc',
+      '#5ef5c8','#ff5fa0'
+    ];
+
+    for (let i = 0; i < 14; i++) {
+      const ring = document.createElement('div');
+      ring.className = 'ring';
+      const size = 95 - i * 6;          // % of parent
+      const dur  = 6 + i * 1.2;         // each ring different speed
+      const dash = 8 + i * 4;
+
+      ring.style.cssText = `
+        width: ${size}%; height: ${size}%;
+        --dur: ${dur}s;
+        border-color: ${colors[i]};
+        opacity: ${0.5 - i * 0.025};
+        border-style: dashed;
+        border-width: ${i % 3 === 0 ? 2 : 1}px;
+      `;
+      ringsEl.appendChild(ring);
+    }
+
+    // ── Floating dots ──
+    const field = document.getElementById('dotsField');
+    for (let i = 0; i < 40; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      const size = 3 + Math.random() * 5;
+      dot.style.cssText = `
+        width: ${size}px; height: ${size}px;
+        left: ${Math.random()*100}%;
+        top:  ${Math.random()*100}%;
+        --dot-dur:   ${2 + Math.random()*4}s;
+        --dot-delay: ${Math.random()*4}s;
+        background: ${Math.random()>0.5 ? '#7eb8ff' : '#c084fc'};
+      `;
+      field.appendChild(dot);
+    }
+
+    // ── Animate progress counter ──
+    const target = 71;
+    const pctEl  = document.getElementById('pct');
+    let current  = 0;
+    const step   = () => {
+      if (current < target) {
+        current = Math.min(current + 1, target);
+        pctEl.textContent = current + '%';
+        setTimeout(step, 4000 / target);
+      }
+    };
+    setTimeout(step, 200);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problema de las 8 Reinas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Confetti canvas (siempre encima) -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Pantalla de victoria -->
+    <div id="victoryOverlay" class="victory-overlay">
+        <div class="victory-card">
+            <div class="victory-icon">👑</div>
+            <h2 class="victory-title">¡Felicidades!</h2>
+            <p class="victory-msg">Resolviste el Problema de las 8 Reinas.<br>¡Las 8 reinas están en paz!</p>
+            <button id="victoryClose" class="btn-victory-close">Seguir jugando</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>🎯 Problema de las 8 Reinas</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="boardColor">Color del Tablero:</label>
+                <select id="boardColor">
+                    <option value="classic">Clásico</option>
+                    <option value="ocean">Océano</option>
+                    <option value="forest">Bosque</option>
+                    <option value="sunset">Atardecer</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="queenImage">Imagen de Reina:</label>
+                <select id="queenImage">
+                    <option value="emoji">👑 Corona</option>
+                    <option value="unicode">♕ Reina</option>
+                    <option value="letter">Q Letra</option>
+                    <option value="star">★ Estrella</option>
+                    <option value="diamond">◆ Diamante</option>
+                </select>
+            </div>
+
+            <button id="blockModeBtn" class="btn-block">🔒 Bloquear Celda</button>
+            <button id="resetBtn" class="btn-reset">🔄 Reiniciar</button>
+        </div>
+
+        <div class="board-container">
+            <div id="board" class="board classic"></div>
+        </div>
+
+        <div class="solutions-section">
+            <h2>Soluciones</h2>
+            <div class="solutions-buttons">
+                <button id="solution1Btn" class="btn-solution">Solución 1</button>
+                <button id="solution2Btn" class="btn-solution">Solución 2</button>
+                <button id="solution3Btn" class="btn-solution">Solución 3</button>
+            </div>
+            <div id="solutionInfo" class="solution-info"></div>
+        </div>
+
+        <div class="info-section">
+            <p><strong>Instrucciones:</strong> Haz clic en las celdas para colocar o quitar reinas. Activa el modo 🔒 para bloquear celdas con color. Las celdas en rojo están bajo ataque.</p>
+            <p id="status" class="status">Reinas colocadas: 0/8</p>
+        </div>
+    </div>
+
+    <script src="functions.js"></script>
+</body>
+</html>
