@@ -400,3 +400,26 @@ body::before {
     .board-area { order: -1; }
     .board { width: 340px; height: 340px; margin: 0 auto; }
 }
+
+/* ── LÓGICA AUTOMÁTICA PARA SWATCHES ── */
+/* Esto lee el atributo data-color del HTML y lo aplica como fondo */
+.swatch[data-color="#f7f7f7"] { background: #f7f7f7; }
+.swatch[data-color="#ffe5e5"] { background: #ffe5e5; }
+.swatch[data-color="#e5f0ff"] { background: #e5f0ff; }
+.swatch[data-color="#e5ffe8"] { background: #e5ffe8; }
+.swatch[data-color="#fff8e5"] { background: #fff8e5; }
+.swatch[data-color="#2a2f4a"] { background: #2a2f4a; }
+
+.swatch[data-color="#c7d5f8"] { background: #c7d5f8; }
+.swatch[data-color="#e4eaf8"] { background: #e4eaf8; }
+.swatch[data-color="#ffd6d6"] { background: #ffd6d6; }
+.swatch[data-color="#d6f5da"] { background: #d6f5da; }
+.swatch[data-color="#fdefc3"] { background: #fdefc3; }
+.swatch[data-color="#1a1f38"] { background: #1a1f38; }
+
+.swatch[data-color="#ff4d4d"] { background: #ff4d4d; }
+.swatch[data-color="#ff9f1c"] { background: #ff9f1c; }
+.swatch[data-color="#2ec4b6"] { background: #2ec4b6; }
+.swatch[data-color="#a855f7"] { background: #a855f7; }
+.swatch[data-color="#22c55e"] { background: #22c55e; }
+.swatch[data-color="#facc15"] { background: #facc15; }

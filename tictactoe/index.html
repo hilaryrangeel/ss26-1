@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe Simulación</title>
+    <title>Tic Tac Toe Arcade</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
   <!-- PANTALLA DE NOMBRES -->
   <div id="name-screen">
-    <h1>🎮 Tic Tac Toe</h1>
+    <h1># Tic Tac Toe #</h1>
     <p>Ingresa los nombres de los jugadores para comenzar</p>
     <div class="name-fields">
       <div class="name-field">
@@ -29,13 +27,12 @@
   <!-- JUEGO -->
   <div id="game-screen">
     <div class="app">
-
       <section class="board-area">
         <div class="board" id="board"></div>
       </section>
 
       <section class="panel">
-        <h1>🎮 Tic Tac Toe</h1>
+        <h1># Tic Tac Toe #</h1>
 
         <div>
           <div class="section-label">Par de fichas</div>
@@ -71,32 +68,33 @@
 
         <div class="color-section">
           <div class="section-label">Colores del tablero</div>
+          <!-- Los colores ahora se definen por clases o CSS puro -->
           <div class="color-row">
             <span>Celda A</span>
-            <div class="swatch active" data-target="clr1" data-color="#f7f7f7" style="background:#f7f7f7"></div>
-            <div class="swatch" data-target="clr1" data-color="#ffe5e5" style="background:#ffe5e5"></div>
-            <div class="swatch" data-target="clr1" data-color="#e5f0ff" style="background:#e5f0ff"></div>
-            <div class="swatch" data-target="clr1" data-color="#e5ffe8" style="background:#e5ffe8"></div>
-            <div class="swatch" data-target="clr1" data-color="#fff8e5" style="background:#fff8e5"></div>
-            <div class="swatch" data-target="clr1" data-color="#2a2f4a" style="background:#2a2f4a"></div>
+            <div class="swatch active" data-target="clr1" data-color="#f7f7f7"></div>
+            <div class="swatch" data-target="clr1" data-color="#ffe5e5"></div>
+            <div class="swatch" data-target="clr1" data-color="#e5f0ff"></div>
+            <div class="swatch" data-target="clr1" data-color="#e5ffe8"></div>
+            <div class="swatch" data-target="clr1" data-color="#fff8e5"></div>
+            <div class="swatch" data-target="clr1" data-color="#2a2f4a"></div>
           </div>
           <div class="color-row">
             <span>Celda B</span>
-            <div class="swatch active" data-target="clr2" data-color="#c7d5f8" style="background:#c7d5f8"></div>
-            <div class="swatch" data-target="clr2" data-color="#e4eaf8" style="background:#e4eaf8"></div>
-            <div class="swatch" data-target="clr2" data-color="#ffd6d6" style="background:#ffd6d6"></div>
-            <div class="swatch" data-target="clr2" data-color="#d6f5da" style="background:#d6f5da"></div>
-            <div class="swatch" data-target="clr2" data-color="#fdefc3" style="background:#fdefc3"></div>
-            <div class="swatch" data-target="clr2" data-color="#1a1f38" style="background:#1a1f38"></div>
+            <div class="swatch active" data-target="clr2" data-color="#c7d5f8"></div>
+            <div class="swatch" data-target="clr2" data-color="#e4eaf8"></div>
+            <div class="swatch" data-target="clr2" data-color="#ffd6d6"></div>
+            <div class="swatch" data-target="clr2" data-color="#d6f5da"></div>
+            <div class="swatch" data-target="clr2" data-color="#fdefc3"></div>
+            <div class="swatch" data-target="clr2" data-color="#1a1f38"></div>
           </div>
           <div class="color-row">
             <span>Ganadora</span>
-            <div class="swatch active" data-target="win" data-color="#ff4d4d" style="background:#ff4d4d"></div>
-            <div class="swatch" data-target="win" data-color="#ff9f1c" style="background:#ff9f1c"></div>
-            <div class="swatch" data-target="win" data-color="#2ec4b6" style="background:#2ec4b6"></div>
-            <div class="swatch" data-target="win" data-color="#a855f7" style="background:#a855f7"></div>
-            <div class="swatch" data-target="win" data-color="#22c55e" style="background:#22c55e"></div>
-            <div class="swatch" data-target="win" data-color="#facc15" style="background:#facc15"></div>
+            <div class="swatch active" data-target="win" data-color="#ff4d4d"></div>
+            <div class="swatch" data-target="win" data-color="#ff9f1c"></div>
+            <div class="swatch" data-target="win" data-color="#2ec4b6"></div>
+            <div class="swatch" data-target="win" data-color="#a855f7"></div>
+            <div class="swatch" data-target="win" data-color="#22c55e"></div>
+            <div class="swatch" data-target="win" data-color="#facc15"></div>
           </div>
         </div>
 
@@ -113,7 +111,6 @@
     </div>
   </div>
 
-  <!-- OVERLAY GATO -->
   <div id="cat-overlay">
     <div class="cat-emoji">🐱</div>
     <div class="cat-title">¡Ganó el Gato!</div>
@@ -122,5 +119,4 @@
   </div>
   <script src="script.js"></script>
 </body>
-
 </html>
