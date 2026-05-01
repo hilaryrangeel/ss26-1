@@ -2,11 +2,16 @@ class QueensPuzzle {
     constructor() {
         this.board = Array(64).fill(null).map(() => ({ queen: false, blocked: false, blockColor: null }));
         this.boardElement = document.getElementById('board');
+        this.boardContainer = document.getElementById('boardContainer');
         this.statusElement = document.getElementById('status');
         this.solutionInfoElement = document.getElementById('solutionInfo');
         this.blockModeActive = false;
         this.solutions = this.generateSolutions();
         this.confettiFrame = null;
+        this.solutionMode = false;
+        this.savedBoard = null;
+        this.lastPlacedQueen = null;
+        this.lossCondition = false;
         this.init();
     }
 
@@ -19,15 +24,25 @@ class QueensPuzzle {
         document.getElementById('resetBtn').addEventListener('click', () => this.reset());
         document.getElementById('boardColor').addEventListener('change', (e) => this.changeTheme(e.target.value));
         document.getElementById('queenImage').addEventListener('change', () => this.renderBoard());
-        document.getElementById('solution1Btn').addEventListener('click', () => this.showSolution(0));
-        document.getElementById('solution2Btn').addEventListener('click', () => this.showSolution(1));
-        document.getElementById('solution3Btn').addEventListener('click', () => this.showSolution(2));
+
+        // Event listeners para las tarjetas de solución
+        document.querySelectorAll('.solution-item').forEach((item, idx) => {
+            item.addEventListener('click', () => this.showSolution(idx));
+        });
 
         const blockBtn = document.getElementById('blockModeBtn');
         blockBtn.addEventListener('click', () => {
+            if (this.solutionMode) {
+                this.showSolutionModeWarning();
+                return;
+            }
+            if (this.lossCondition) {
+                this.showLossWarning();
+                return;
+            }
             this.blockModeActive = !this.blockModeActive;
             blockBtn.classList.toggle('active', this.blockModeActive);
-            blockBtn.textContent = this.blockModeActive ? '🔓 Desactivar Bloqueo' : '🔒 Bloquear Celda';
+            blockBtn.textContent = this.blockModeActive ? '🔓 Desactivar Bloqueo' : '🔒 Bloquear';
         });
 
         this.boardElement.addEventListener('click', (e) => this.handleCellClick(e));
@@ -35,6 +50,55 @@ class QueensPuzzle {
         document.getElementById('victoryClose').addEventListener('click', () => {
             document.getElementById('victoryOverlay').classList.remove('show');
         });
+
+        document.getElementById('defeatRetryBtn').addEventListener('click', () => {
+            this.reset();
+            document.getElementById('defeatOverlay').classList.remove('show');
+        });
+    }
+
+    showSolutionModeWarning() {
+        const warning = document.createElement('div');
+        warning.textContent = '⚠️ Haz clic en "Reiniciar" para salir del modo solución';
+        warning.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #ff5fa0;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-family: 'Unbounded', sans-serif;
+            border: 1px solid #ff5fa0;
+            z-index: 1001;
+            pointer-events: none;
+        `;
+        document.body.appendChild(warning);
+        setTimeout(() => warning.remove(), 2500);
+    }
+
+    showLossWarning() {
+        const warning = document.createElement('div');
+        warning.textContent = '💀 Ya has perdido. Haz clic en "Reiniciar" para jugar de nuevo';
+        warning.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #ff4444;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-family: 'Unbounded', sans-serif;
+            border: 1px solid #ff4444;
+            z-index: 1001;
+            pointer-events: none;
+        `;
+        document.body.appendChild(warning);
+        setTimeout(() => warning.remove(), 2500);
     }
 
     renderBoard() {
@@ -63,10 +127,23 @@ class QueensPuzzle {
                 } else if (cellData.queen) {
                     cell.classList.add('queen');
                     cell.textContent = this.getQueenSymbol();
+                    if (this.lossCondition && this.lastPlacedQueen === index) {
+                        cell.classList.add('failed-queen');
+                    }
                 } else if (this.isUnderAttack(index)) {
                     cell.classList.add('attack');
                 } else {
                     cell.classList.add('safe');
+                }
+
+                if (this.solutionMode) {
+                    cell.style.cursor = 'not-allowed';
+                    cell.style.opacity = '0.85';
+                }
+
+                if (this.lossCondition && !this.solutionMode) {
+                    cell.style.cursor = 'not-allowed';
+                    cell.style.opacity = '0.7';
                 }
 
                 this.boardElement.appendChild(cell);
@@ -74,6 +151,43 @@ class QueensPuzzle {
         }
 
         this.updateStatus();
+        this.updateControlsState();
+    }
+
+    updateControlsState() {
+        const blockBtn = document.getElementById('blockModeBtn');
+        const solutionItems = document.querySelectorAll('.solution-item');
+        const queenSelect = document.getElementById('queenImage');
+
+        if (this.solutionMode || this.lossCondition) {
+            blockBtn.disabled = true;
+            blockBtn.style.opacity = '0.5';
+            blockBtn.style.cursor = 'not-allowed';
+            solutionItems.forEach(item => {
+                item.style.pointerEvents = 'none';
+                item.style.opacity = '0.5';
+            });
+            queenSelect.disabled = true;
+            queenSelect.style.opacity = '0.5';
+            queenSelect.style.cursor = 'not-allowed';
+            if (this.solutionMode) {
+                this.boardContainer.classList.add('solution-mode');
+            } else {
+                this.boardContainer.classList.remove('solution-mode');
+            }
+        } else {
+            blockBtn.disabled = false;
+            blockBtn.style.opacity = '1';
+            blockBtn.style.cursor = 'pointer';
+            solutionItems.forEach(item => {
+                item.style.pointerEvents = 'auto';
+                item.style.opacity = '1';
+            });
+            queenSelect.disabled = false;
+            queenSelect.style.opacity = '1';
+            queenSelect.style.cursor = 'pointer';
+            this.boardContainer.classList.remove('solution-mode');
+        }
     }
 
     getQueenSymbol() {
@@ -83,6 +197,16 @@ class QueensPuzzle {
     }
 
     handleCellClick(e) {
+        if (this.solutionMode) {
+            this.showSolutionModeWarning();
+            return;
+        }
+
+        if (this.lossCondition) {
+            this.showLossWarning();
+            return;
+        }
+
         const cell = e.target.closest('.cell');
         if (!cell) return;
 
@@ -104,12 +228,78 @@ class QueensPuzzle {
 
         if (cellData.blocked) return;
 
-        if (cellData.queen) {
-            this.board[index].queen = false;
-        } else if (this.countQueens() < 8) {
+        if (!cellData.queen && this.countQueens() < 8) {
+            const wouldBeUnderAttack = this.wouldBeUnderAttack(index);
+            
+            if (wouldBeUnderAttack) {
+                this.triggerLoss(index, 'Has colocado una reina en una posición inválida. ¡Las reinas no pueden atacarse entre sí!');
+                return;
+            }
+            
             this.board[index].queen = true;
+            this.lastPlacedQueen = index;
+        } else if (cellData.queen) {
+            this.board[index].queen = false;
+            this.lastPlacedQueen = null;
         }
 
+        this.renderBoard();
+        
+        if (!this.lossCondition && this.countQueens() > 0 && !this.hasPossibleSolution()) {
+            this.triggerLoss(null, 'Te has bloqueado. No hay forma de colocar las 8 reinas sin que se ataquen.');
+        }
+    }
+
+    wouldBeUnderAttack(index) {
+        const row = Math.floor(index / 8);
+        const col = index % 8;
+
+        for (let i = 0; i < 64; i++) {
+            if (!this.board[i].queen) continue;
+            const qRow = Math.floor(i / 8);
+            const qCol = i % 8;
+            if (qRow === row || qCol === col) return true;
+            if (Math.abs(qRow - row) === Math.abs(qCol - col)) return true;
+        }
+        return false;
+    }
+
+    hasPossibleSolution() {
+        const queensToPlace = 8 - this.countQueens();
+        if (queensToPlace === 0) return true;
+        
+        const freeCells = [];
+        for (let i = 0; i < 64; i++) {
+            if (!this.board[i].blocked && !this.board[i].queen) {
+                freeCells.push(i);
+            }
+        }
+        
+        if (freeCells.length < queensToPlace) return false;
+        
+        let possiblePlaces = 0;
+        for (const cell of freeCells) {
+            if (!this.wouldBeUnderAttack(cell)) {
+                possiblePlaces++;
+            }
+        }
+        return possiblePlaces >= queensToPlace;
+    }
+
+    triggerLoss(failedIndex, message) {
+        this.lossCondition = true;
+        this.lastPlacedQueen = failedIndex;
+        
+        this.boardElement.classList.add('shake-animation');
+        setTimeout(() => {
+            this.boardElement.classList.remove('shake-animation');
+        }, 500);
+        
+        const defeatOverlay = document.getElementById('defeatOverlay');
+        const defeatMsg = document.getElementById('defeatMsg');
+        defeatMsg.innerHTML = message + '<br><br>💀 Reinicia el juego para intentarlo de nuevo 💀';
+        defeatOverlay.classList.add('show');
+        
         this.renderBoard();
     }
 
@@ -135,7 +325,6 @@ class QueensPuzzle {
             if (qRow === row || qCol === col) return true;
             if (Math.abs(qRow - row) === Math.abs(qCol - col)) return true;
         }
-
         return false;
     }
 
@@ -144,6 +333,8 @@ class QueensPuzzle {
     }
 
     isSolved() {
+        if (this.solutionMode) return false;
+        if (this.lossCondition) return false;
         if (this.countQueens() !== 8) return false;
         for (let i = 0; i < 64; i++) {
             if (this.board[i].queen && this.isUnderAttack(i)) return false;
@@ -153,14 +344,31 @@ class QueensPuzzle {
 
     updateStatus() {
         const count = this.countQueens();
+        
+        if (this.lossCondition) {
+            this.statusElement.textContent = '💀 HAS PERDIDO - Reinicia para jugar 💀';
+            this.statusElement.classList.add('status-loss');
+            return;
+        }
+        
+        if (this.solutionMode) {
+            this.statusElement.textContent = `📋 Vista previa de solución`;
+            this.statusElement.style.color = '#5ef5c8';
+            this.statusElement.classList.remove('status-win');
+            this.statusElement.classList.remove('status-loss');
+            return;
+        }
+        
         if (this.isSolved()) {
-            this.statusElement.textContent = '¡Solución encontrada! 🎉';
+            this.statusElement.textContent = '👑 ¡Solución encontrada! 👑';
             this.statusElement.classList.add('status-win');
             document.querySelectorAll('.cell.queen').forEach(c => c.classList.add('success'));
             setTimeout(() => this.showVictory(), 400);
         } else {
             this.statusElement.classList.remove('status-win');
-            this.statusElement.textContent = `Reinas colocadas: ${count}/8`;
+            this.statusElement.classList.remove('status-loss');
+            this.statusElement.textContent = `👑 ${count} / 8 reinas`;
+            this.statusElement.style.color = '';
         }
     }
 
@@ -213,7 +421,6 @@ class QueensPuzzle {
             if (alive) this.confettiFrame = requestAnimationFrame(animate);
             else ctx.clearRect(0, 0, canvas.width, canvas.height);
         };
-
         animate();
     }
 
@@ -222,29 +429,49 @@ class QueensPuzzle {
     }
 
     reset() {
+        this.solutionMode = false;
+        this.lossCondition = false;
+        this.lastPlacedQueen = null;
+        this.savedBoard = null;
+        
         this.board = Array(64).fill(null).map(() => ({ queen: false, blocked: false, blockColor: null }));
         this.blockModeActive = false;
+        
         const blockBtn = document.getElementById('blockModeBtn');
         blockBtn.classList.remove('active');
-        blockBtn.textContent = '🔒 Bloquear Celda';
-        this.solutionInfoElement.textContent = '';
+        blockBtn.textContent = '🔒 Bloquear';
+        
+        const infoElement = document.getElementById('solutionInfo');
+        if (infoElement) infoElement.innerHTML = '';
+        
         document.getElementById('victoryOverlay').classList.remove('show');
+        document.getElementById('defeatOverlay').classList.remove('show');
+        
         if (this.confettiFrame) cancelAnimationFrame(this.confettiFrame);
         const canvas = document.getElementById('confettiCanvas');
-        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        
         this.renderBoard();
     }
 
     showSolution(solutionIndex) {
         if (solutionIndex >= this.solutions.length) return;
-
+        
+        if (!this.solutionMode && !this.savedBoard) {
+            this.savedBoard = this.board.map(cell => ({ 
+                queen: cell.queen, 
+                blocked: cell.blocked, 
+                blockColor: cell.blockColor 
+            }));
+        }
+        
         const solution = this.solutions[solutionIndex];
-        const blocked = this.board.map(c => ({ blocked: c.blocked, blockColor: c.blockColor }));
-
+        const blockedCells = this.board.map(c => ({ blocked: c.blocked, blockColor: c.blockColor }));
+        
         this.board = Array(64).fill(null).map((_, i) => ({
             queen: false,
-            blocked: blocked[i].blocked,
-            blockColor: blocked[i].blockColor,
+            blocked: blockedCells[i].blocked,
+            blockColor: blockedCells[i].blockColor,
         }));
 
         for (let col = 0; col < 8; col++) {
@@ -255,8 +482,17 @@ class QueensPuzzle {
             }
         }
 
-        this.solutionInfoElement.textContent =
-            `Solución ${solutionIndex + 1} — Posiciones por columna: [${solution.join(', ')}]`;
+        this.solutionMode = true;
+        this.lossCondition = false;
+        
+        const infoElement = document.getElementById('solutionInfo');
+        if (infoElement) {
+            infoElement.innerHTML = `
+                <span style="color: #ff5fa0;">📋 Solución ${solutionIndex + 1} — [${solution.join(', ')}]</span>
+                <span style="display: block; font-size: 0.6rem; margin-top: 4px;">⚠️ Haz clic en "Reiniciar" para volver a jugar</span>
+            `;
+        }
+        
         this.renderBoard();
     }
 

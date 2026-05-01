@@ -3,70 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Problema de las 8 Reinas</title>
+    <title>8 Reinas — Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
 
-    <!-- Confetti canvas (siempre encima) -->
+<a href="../index.html" class="back-link">← Volver</a>
+<body>
     <canvas id="confettiCanvas"></canvas>
 
-    <!-- Pantalla de victoria -->
+    <!-- Overlays -->
     <div id="victoryOverlay" class="victory-overlay">
-        <div class="victory-card">
-            <div class="victory-icon">👑</div>
-            <h2 class="victory-title">¡Felicidades!</h2>
-            <p class="victory-msg">Resolviste el Problema de las 8 Reinas.<br>¡Las 8 reinas están en paz!</p>
-            <button id="victoryClose" class="btn-victory-close">Seguir jugando</button>
+        <div class="overlay-card">
+            <div class="overlay-icon">👑</div>
+            <h2>¡Felicidades!</h2>
+            <p>Resolviste el Problema de las 8 Reinas.<br>¡Las 8 reinas están en paz!</p>
+            <button id="victoryClose">Seguir jugando</button>
         </div>
     </div>
 
-    <div class="container">
-        <h1>🎯 Problema de las 8 Reinas</h1>
+    <div id="defeatOverlay" class="defeat-overlay">
+        <div class="overlay-card">
+            <div class="overlay-icon">💀</div>
+            <h2>¡Has Perdido!</h2>
+            <p id="defeatMsg">Has colocado una reina en una posición inválida.<br>Las reinas no pueden atacarse entre sí.</p>
+            <button id="defeatRetryBtn">Intentar de nuevo</button>
+        </div>
+    </div>
 
-        <div class="controls">
-            <div class="control-group">
-                <label for="boardColor">Color del Tablero:</label>
-                <select id="boardColor">
-                    <option value="classic">Clásico</option>
-                    <option value="ocean">Océano</option>
-                    <option value="forest">Bosque</option>
-                    <option value="sunset">Atardecer</option>
-                </select>
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- Header -->
+        <div class="main-header">
+            <div class="header-icon">👑</div>
+            <h1 class="main-title">Problema de las 8 Reinas</h1>
+            <p class="main-subtitle">Coloca 8 reinas sin que se ataquen</p>
+        </div>
+        <!-- Grid 2 columnas -->
+        <div class="main-grid">
+            
+            <!-- Columna Izquierda: Tablero -->
+            <div class="board-col">
+                <div class="panel">
+                    <div class="panel-title">
+                        <p><strong>📖 Instrucciones</strong></p>
+                    </div>
+                    <p id="inst">👑Haz clic para poner/quitar reina • 💗 Evita las celdas rosadas (están bajo ataque) 
+                        <br> 🔒 Usa "Bloquear" para prohibir celdas • ✅ Coloca 8 reinas sin que se ataquen</p>
+                </div>
+                <div class="board-card">
+                    <div id="boardContainer" class="board-container">
+                        <div id="board" class="board classic"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="control-group">
-                <label for="queenImage">Imagen de Reina:</label>
-                <select id="queenImage">
-                    <option value="emoji">👑 Corona</option>
-                    <option value="unicode">♕ Reina</option>
-                    <option value="letter">Q Letra</option>
-                    <option value="star">★ Estrella</option>
-                    <option value="diamond">◆ Diamante</option>
-                </select>
+            <!-- Columna Derecha: Paneles -->
+            <div class="panels-col">
+                <p id="status" class="status-badge">Reinas colocadas: 0/8</p>
+                <!-- Panel Personalizar -->
+                <div class="panel">
+                    <div class="panel-title">🎨 Personalizar</div>
+                    <div class="panel-row">
+                        <span>Tablero</span>
+                        <select id="boardColor">
+                            <option value="classic">Clásico</option>
+                            <option value="ocean">Océano</option>
+                            <option value="forest">Bosque</option>
+                            <option value="sunset">Atardecer</option>
+                        </select>
+                    </div>
+                    <div class="panel-row">
+                        <span>Reina</span>
+                        <select id="queenImage">
+                            <option value="emoji">👑 Corona</option>
+                            <option value="unicode">♕ Reina</option>
+                            <option value="letter">Q Letra</option>
+                            <option value="star">★ Estrella</option>
+                            <option value="diamond">◆ Diamante</option>
+                        </select>
+                    </div>
+                    <div class="panel-buttons">
+                        <button id="blockModeBtn" class="btn-outline">🔒 Bloquear</button>
+                        <button id="resetBtn" class="btn-primary">🔄 Reiniciar</button>
+                    </div>
+                </div>
+
+                <!-- Panel Soluciones -->
+                <div class="panel">
+                    <div class="panel-title">💡 Soluciones rápidas</div>
+                    <div class="solutions-list">
+                        <div class="solution-item" data-solution="0">
+                            <div class="solution-badge">01</div>
+                            <div class="solution-content">
+                                <div class="solution-name">Solución 1</div>
+                                <div class="solution-desc">8 reinas · Clásica</div>
+                            </div>
+                            <div class="solution-icon">👑</div>
+                        </div>
+                        <div class="solution-item" data-solution="1">
+                            <div class="solution-badge">02</div>
+                            <div class="solution-content">
+                                <div class="solution-name">Solución 2</div>
+                                <div class="solution-desc">8 reinas · Alternativa</div>
+                            </div>
+                            <div class="solution-icon">♛</div>
+                        </div>
+                        <div class="solution-item" data-solution="2">
+                            <div class="solution-badge">03</div>
+                            <div class="solution-content">
+                                <div class="solution-name">Solución 3</div>
+                                <div class="solution-desc">8 reinas · Avanzada</div>
+                            </div>
+                            <div class="solution-icon">★</div>
+                        </div>
+                    </div>
+                    <div id="solutionInfo" class="solution-message"></div>
+                </div>
             </div>
-
-            <button id="blockModeBtn" class="btn-block">🔒 Bloquear Celda</button>
-            <button id="resetBtn" class="btn-reset">🔄 Reiniciar</button>
-        </div>
-
-        <div class="board-container">
-            <div id="board" class="board classic"></div>
-        </div>
-
-        <div class="solutions-section">
-            <h2>Soluciones</h2>
-            <div class="solutions-buttons">
-                <button id="solution1Btn" class="btn-solution">Solución 1</button>
-                <button id="solution2Btn" class="btn-solution">Solución 2</button>
-                <button id="solution3Btn" class="btn-solution">Solución 3</button>
-            </div>
-            <div id="solutionInfo" class="solution-info"></div>
-        </div>
-
-        <div class="info-section">
-            <p><strong>Instrucciones:</strong> Haz clic en las celdas para colocar o quitar reinas. Activa el modo 🔒 para bloquear celdas con color. Las celdas en rojo están bajo ataque.</p>
-            <p id="status" class="status">Reinas colocadas: 0/8</p>
         </div>
     </div>
 
