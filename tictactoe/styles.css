@@ -44,6 +44,26 @@ body::after {
     z-index: 100;
 }
 
+/* Back link */
+    .back-link {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      z-index: 20;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+      animation: fadeUp 0.6s ease both;
+    }
+    .back-link:hover { color: var(--text); }
+
+
 /* Grano de ruido de Home */
 body::before {
     content: '';
